@@ -1,64 +1,26 @@
 #include <iostream>
 
-class B
+class BP
+{
+public:
+	virtual int f1() { return 2; }
+	virtual void f2() { std::cout << "parent function" << std::endl; }
+	virtual char f3() { return 'p'; }
+};
+class B: public BP
 {
 private:
-	int f1() { std::cout << '1'; return 1; }
+	int f1() { std::cout << '1' << std::endl; return 1; }
 	void f2() { std::cout << "f2" << std::endl; }
-	char f3() 
-	{ return 'a'; }
-
-	int(* ptr1)() { f1 };
-	int n = f1();
-	char k = f3();
-public:
-	B(int n = 0, char k = 'A') :n(n), k(k) {}
+	char f3() { std::cout << "aaa" << std::endl; return 'a'; }
 };
 
-class B2
-{
-public:
-	int f1() { return 0; }
-	void f2() { std::cout << "f22" << std::endl; }
-	char f3() { return 'b'; }
-
-	int n2;
-	char k2;
-};
-
-char& get_b(B& b)
-{
-	void* p = &b;
-	B2* b2 = static_cast<B2*>(p);
-	return b2->k2;
-}
-
-void ff1(B& b)
-{
-	void* p = &b;
-	B2* b2 = static_cast<B2*>(p);
-	b2->f1();
-	int i = b2->f1();
-	std::cout << i;
-}
-/*void nn(B& b, int num)
-{
-	reinterpret_cast<B2*>(&b)->n2 = num;
-}
-void ff1(B& b) {
-	reinterpret_cast<B2*>(&b)->f1();
-}
-void ff2(B& b) {
-	reinterpret_cast<B2*>(&b)->f2();
-}
-void ff3(B& b) {
-	reinterpret_cast<B2*>(&b)->f3();
-}*/
 int main(int argc, char* argv[])
 {
 	B b;
-	char ch = get_b(b);
-	std::cout << ch;
-	ff1(b);
+	BP* b2 = &b;
+	b2->f1();
+	b2->f2();
+	b2->f3();
 	return EXIT_SUCCESS;
 }
