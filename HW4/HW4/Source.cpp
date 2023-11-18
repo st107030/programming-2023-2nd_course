@@ -1,130 +1,125 @@
 #include <iostream>
 
-template<typename T>
-	struct Node
-	{
-		T data;
-		Node* next;
-		Node(T data, Node* next = nullptr) :
-			data(data), next(next) {}
-		~Node() {}
-	};
+template <typename T>
 
-template<typename T>
 class List
 {
 private:
-	Node* head;
-	Node* tail;
-	int Index_Valid(int index)
-	{
-		return (index % this->Length());
-	}
+    struct  Node
+    {
+        T data;
+        Node* next;
+    };
 
+    Node* head;
+    Node* tail;
+    int size;
 public:
-	List(Node* head, Node* tail)
-	{
-		this->head = head;
-		this->tail = tail;
-		this->tail->next = head;
-	}
-	~List()
-	{
-		while (this->head != nullptr)
-		{
-			Node temp = head;
-			this->head = head->next;
-			delete temp;
-		}
-	}
-	void BiList::Insert_Node(Node* node) //insert to head
-	{
-		node->next = this->head;
-		this->head = node;
-		this->tail->next = this->head;
-		return;
-	} 
-	int Length()
-	{
-		int count = 0;
-		Node<T>* temp = this->head;
-		count++;
-		temp = temp->next;
-		while (temp != head)
-		{
-			temp = temp->next;
-			++count;
-		}
-		return count;
-	}
+    List() :head(NULL), tail(NULL), size(0) {};
+    ~List()
+    {
+        while (size != 0) 
+        {
+            Node* temp = head->next;
+            delete head; 
+            head = temp; 
+            size--;
+        }
+    }
 
-	Node* Extract_Node(int index)//return pointer by index
-	{
-		index = Index_Valid(index));
-		Node<T>* res = nullptr;
-		if (index == 0)
-		{
-			res = this->head;
-			this->head = this->head->next;
-			this->tail = (this->head == nullptr ? nullptr : this->tail);
-		}
-		else
-		{
-			Node<T>* temp = this->head;
-			while (index > 1)
-			{
-				temp = temp->next;
-				--index;
-			}
-			res = temp->next;
-			temp->next = temp->next->next;
-		}
-		return res;
-	}
-	void Remove(int index)
-	{
-		Node<T>* temp = this->Extract_Node(index);
-		if (temp != nullptr)
-		{
-			delete temp;
-		}
-	}
+    int Count()
+    {
+        return size; 
 
-	T& operator[](int index)
-	{
-		index = Index_Valid(index);
-		Node<T>* temp = this->head;
-		while (index > 0)
-		{
-			temp = temp->next;
-			--index;
-		}
-		return temp->data;
-	}
+    }
 
-	friend std::ostream& operator<<(std::ostream& stream, const List& list);
+    void Insert(T x)
+    {
+        size++;
+        Node* temp = new Node; 
+        temp->next = head; 
+        temp->data = x; 
+        if (head != NULL) 
+        {
+            tail->next = temp;
+            tail = temp; 
+        }
+        else head = tail = temp;
+    }
 
-	void Print(std::ostream& stream) const
-	{
-		Node<T>* temp = head;
-		while (temp->next != head)
-		{
-			stream << temp->data << " ";
-			temp = temp->next;
-		}
-		stream << temp->data;
-	}
+    T& operator[](int index) 
+    {
+        index %= size;
+        Node* current = head;
+        for (int i = 0; i < index && current != nullptr; i++)
+            current = current->next;
+        return current->data;
+    }
+
+    void RemoveNode(int index)
+    {
+        index %= size;
+        if (head == nullptr) 
+        { return; }
+
+        Node* current = head;
+
+        if (current->next == head && index == 0) 
+        {
+            head = nullptr;
+            delete current;
+            size--;
+            return;
+        }
+
+        if (index == 0)
+        {
+            Node* temp = head;
+            head = head->next;
+            tail->next = head;
+            delete temp;
+            size--;
+        }
+        else
+        {
+            int count = 0;
+            while (count != index - 1)
+            {
+                current = current->next;
+                count++;
+            }
+            Node* temp = current->next;
+            current->next = current->next->next;
+            delete temp;
+            size--;
+        }
+    }
+
+    void Print()
+    {
+        Node* tmph;
+        tmph = head; 
+        int temp = size;
+        while (temp != 0)
+        {
+            std::cout << tmph->data << " "; 
+            tmph = tmph->next; 
+            temp--; 
+        }
+    }
 };
 
-template <typename T>
-std::ostream& operator<<(std::ostream& stream, const List<T>& list)
+int main()
 {
-	list.Print(stream);
-	return stream;
-}
+    List<int> list;
+    list.Insert(100);
+    list.Insert(200);
+    list.Insert(300);
 
-int main(int argc, char* argv[])
-{
-	//I will text smth here later
-	return EXIT_SUCCESS;
+    list.Print(); 
+    std::cout << std::endl;
+
+    list.RemoveNode(0);
+    list.Print();
+    return EXIT_SUCCESS;
 }
