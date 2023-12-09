@@ -8,7 +8,14 @@ public:
 	Mod239(int cl = 0) : cl(cl % 239){}
 	~Mod239(){}
 
-	int mod(int cl) { return cl % 239; }
+	int mod(int cl) 
+	{ 
+		while (cl < 0)
+		{
+			cl += 239;
+		}
+		return cl % 239; 
+	}
 	int inversed(int cl)
 	{
 		if (cl == 0) { return -1; }
@@ -18,19 +25,6 @@ public:
 		return i;
 	}
 
-	Mod239 operator+ (Mod239 num) { return Mod239(mod(num.cl + cl)); }
-	Mod239 operator- (Mod239 num) { return Mod239(mod(cl - num.cl + 239)); }
-	Mod239 operator* (Mod239 num) { return Mod239(mod(num.cl * cl)); }
-	Mod239 operator/ (Mod239 num) 
-	{ 
-		if (num.cl != 0)
-		{
-			return Mod239(inversed(num.cl) * cl);
-		}
-		std::cout << " то тут у нас на 0 делит" << std::endl;
-		return -1;
-	}
-
 	Mod239 operator+= (Mod239 num)
 	{
 		cl = mod(cl + num.cl);
@@ -38,7 +32,7 @@ public:
 	}
 	Mod239 operator-= (Mod239 num)
 	{
-		cl = mod(cl = num.cl + 239);
+		cl = mod(cl - num.cl);
 		return *this;
 	}
 	Mod239 operator*= (Mod239 num)
@@ -88,28 +82,31 @@ public:
 		return cl <= c.cl;
 	}
 
-	unsigned long power(unsigned long a, unsigned long x, unsigned long p)
+	unsigned powmod(unsigned base, unsigned exp, unsigned modulo)
 	{
-		unsigned long result = 1;
+		unsigned res = 1;
 
-		while (x)
+		while (exp != 0)
 		{
-			if (x % 2 == 0)
+			if ((exp & 1) != 0)
 			{
-				x /= 2;
-				a *= a % p;
+				res = (1ll * res * base) % modulo;
 			}
-			else
-			{
-				x--;
-				result *= a % p;
-			}
+
+			base = (1ll * base * base) % modulo;
+			exp >>= 1;
 		}
-		return result % p;
+
+		return res;
 	}
 
 	friend std::ostream& operator<<(std::ostream& stream, const Mod239& c);
 	friend std::istream& operator >> (std::istream& in, Mod239& num);
+
+	friend Mod239 operator+ (Mod239 num, Mod239 num2);
+	friend Mod239 operator- (Mod239 num, Mod239 num2);
+	friend Mod239 operator* (Mod239 num, Mod239 num2);
+	friend Mod239 operator/ (Mod239 num, Mod239 num2);
 };
 
 std::ostream& operator<<(std::ostream& stream, const Mod239& c)
@@ -126,6 +123,32 @@ std::istream& operator >> (std::istream& in, Mod239& num)
 	return in;
 }
 
+
+Mod239 operator+ (Mod239 num, Mod239 num2) 
+{ 
+	Mod239 k = num.cl + num2.cl; 
+	return k.mod(k.cl);
+}
+Mod239 operator- (Mod239 num, Mod239 num2) 
+{ 
+	Mod239 k = num.cl - num2.cl;
+	return k.mod(k.cl);
+
+}
+Mod239 operator* (Mod239 num, Mod239 num2) 
+{ 
+	Mod239 k = num.cl * num2.cl;
+	return k.mod(k.cl);
+}
+Mod239 operator/ (Mod239 num, Mod239 num2)
+{
+	if (num.cl != 0)
+	{
+		Mod239 k = num2.inversed(num2.cl) * num.cl;
+		return k.mod(k.cl);
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	Mod239 a;
@@ -136,7 +159,20 @@ int main(int argc, char* argv[])
 	std::cout << a + 100 << std::endl;
 	std::cout << a * 56 << std::endl;
 	std::cout << a / 12 << std::endl; //a * 20
-	if (a != 8) { a *= b; std::cout << a << std::endl; }
-	std::cout << a.power((unsigned long)(a.cl),238,239);
+	a += 1;
+	std::cout << a << std::endl;
+	a -= 9;
+	std::cout << a << std::endl;
+	a *= 100;
+	std::cout << a << std::endl;
+	a /= 10;
+	std::cout << a << std::endl;
+	std::cout << "a == 0 - " << (a == 0) << std::endl;
+	std::cout << "a >= 0 - " << (a >= 0) << std::endl;
+	std::cout << "a <= 0 - " << (a <= 0) << std::endl;
+	std::cout << "a != 0 - " << (a != 0) << std::endl;
+	std::cout << "a > 0 - " << (a > 0) << std::endl;
+	std::cout << "a < 0 - " << (a < 0) << std::endl;
+	std::cout << a.powmod((unsigned)(a.cl),238,239);
 	return EXIT_SUCCESS;
 }
