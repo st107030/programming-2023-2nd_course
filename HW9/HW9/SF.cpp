@@ -42,8 +42,8 @@ void data_processor(int& q, int& k, int t)
 		std::unique_lock<std::mutex> lk(mut);
 		cv.wait(lk, [=]() {return !is_empty(q); });
 		q--;
-		std::cout << "Task is running" << std::endl;
 		lk.unlock();
+		std::cout << "Task is running" << std::endl;
 		Sleep(t);
 
 		if ((q == 0)&&(k == 0)) break;
