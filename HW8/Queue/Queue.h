@@ -18,17 +18,18 @@ private:
 public:
 	queue(T x)
 	{
-		Node* temp = new Node;
-		temp->data = x;
+		Node* temp = new Node(x);
 		mut.lock();
 		if (!head)
 		{
 			head = temp;
 			tail = temp;
+			mut.unlock();
 			return;
 		}
 		tail->next = temp;
 		tail = tail->next;
+		mut.unlock();
 	}
 	queue(const queue& q)
 	{
@@ -71,7 +72,7 @@ public:
 		return true;
 	}
 
-	bool Front()
+	bool Front(T &t)
 	{
 		mut.lock();
 		if (this->Empty())
@@ -80,33 +81,52 @@ public:
 			mut.unlock();
 			return false;
 		}
-		return head->data;//탕응응응응응응응응응응응응응응응農
+		t = head->data;
 		mut.unlock();
 		return true;
 	}
 
+	void Insert(T x)
+	{
+		Node* temp = new Node(x);
+		mut.lock();
+		tail->next = temp;
+		temp->next = nullptr;
+		tail = temp;
+		mut.unlock();
+	}
+
+
 	void print()
 	{
-		while (this->next != nullptr)
+		mut.lock();
+		Node* q = head;
+		while (q->next != nullptr)
 		{
-			std::cout << this->data << ' ';
-			this = this->next;
+			std::cout << q->data << ' ';
+			q = q->next;
 		}
+		std::cout << q->data << std::endl;
+		mut.unlock();
 	}
 };
 
-void test1()
+void test1(queue<int>& q)
 {
-	queue<int> q;
-
+	q.Insert(2);
+	q.print();
+	q.Insert(3);
+	q.print();
 }
 
-void test2()
+void test2(queue<int>& q)
 {
-
+	q.Pop();
+	q.print();
 }
 
-void test3()
+void test3(queue<int>& q)
 {
-
+	int x = 0;
+	std::cout << "Front " << q.Front(x) << std::endl;
 }
