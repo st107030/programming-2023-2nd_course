@@ -4,7 +4,7 @@ template <typename T>
 class queue
 {
 private:
-	mutex mut;
+	std::mutex mut;
 	struct Node
 	{
 		T data;
@@ -50,26 +50,63 @@ public:
 
 	bool Empty()
 	{
-		if (head) return true;
+		if (head == nullptr) return true;
 		return false;
-	 
+	}
 
-	void Pop()
+	bool Pop()
 	{
 		mut.lock();
-		if (this->Empty()) throw ("Pop from empty queue.");
+		if (this->Empty())
+		{
+			std::cout << "Pop from empty queue." << std::endl;
+			mut.unlock();
+			return false;
+		}
 		Node* temp = head;
 		head = head->next;
 		if (head == NULL) tail = NULL;
 		mut.unlock();
 		delete temp;
+		return true;
 	}
 
-	int Front()
+	bool Front()
 	{
 		mut.lock();
-		if (this->Empty()) throw ("The queue is empty. Impossible to select an element.");
-		return head->data;
+		if (this->Empty())
+		{
+			std::cout << "The queue is empty. Impossible to select an element." << std::endl;
+			mut.unlock();
+			return false;
+		}
+		return head->data;//탕응응응응응응응응응응응응응응응農
 		mut.unlock();
+		return true;
+	}
+
+	void print()
+	{
+		while (this->next != nullptr)
+		{
+			std::cout << this->data << ' ';
+			this = this->next;
+		}
 	}
 };
+
+void test1()
+{
+	queue<int> q;
+
+}
+
+void test2()
+{
+
+}
+
+void test3()
+{
+
+}

@@ -43,11 +43,10 @@ void Master::print_ms()
     std::cout << "Specialization: " << sub_en(major_subject) << std::endl;
 }
 
-std::string get_gr(Test sub, Student st)
+std::string get_gr(Test sub, Student st, Professor pr)
 {
-    srand(time(0));
    //attendance 3/10, knowledge 5/10 luck 2/10
-    int score = round((st.attendance * 3 + (st.average / 5) * 500 + rand() % 201) / 160);
+    int score = round((st.attendance * 3 + (st.average / 5) * 500 + pr.bonus * 2) / 160);
     switch (score)
     {
     case 1:
@@ -65,13 +64,13 @@ std::string get_gr(Test sub, Student st)
     }
 }
 
-std::string get_gr(Test sub, Master st)
+std::string get_gr(Test sub, Master st, Professor pr)
 {
     srand(time(0));
     int i = 0;
     //attendance 2/10, knowledge 6/10 luck 1/10, maj 1/10
     if (sub.subject == st.major_subject) { i = 1; }
-    int score = round((st.attendance * 2 + (st.average / 5) * 600 + rand() % 101 + i * (rand() % 101)) / 160);
+    int score = round((st.attendance * 2 + (st.average / 5) * 600 + pr.bonus + i * (rand() % 101)) / 160);
     switch (score)
     {
     case 1:
@@ -89,19 +88,19 @@ std::string get_gr(Test sub, Master st)
     }
 }
 
-int get_grade(Exam sub, Student st)
+int get_grade(Exam sub, Student st, Professor pr)
 {
     int i = 0;
-    std::string s = get_gr(sub, st);
+    std::string s = get_gr(sub, st, pr);
     if (s == "A") return 5;
     if ((s == "B") || (s == "C")) return 4;
     if ((s == "D") || (s == "E")) return 3;
     return 2;
 }
 
-int get_grade(Exam sub, Master st)
+int get_grade(Exam sub, Master st, Professor pr)
 {
-    std::string s = get_gr(sub, st);
+    std::string s = get_gr(sub, st, pr);
     if (s == "A") return 5;
     if ((s == "B") || (s == "C")) return 4;
     if ((s == "D") || (s == "E")) return 3;
@@ -112,9 +111,9 @@ int get_grade(Exam sub, Master st)
 void test()
 {
     Student st("Egor Toskuev", 2, 75, 4.4);
-    Professor pr("Igor Lvovich", Mechanics);
+    Professor pr("Igor Lvovich", Mechanics, rand() % 101);
     Test mech(Mechanics);
-    mech.gr = get_gr(mech, st);
+    mech.gr = get_gr(mech, st, pr);
     pr.print_prof();
     st.print_st();
     if (mech.gr == "F")
@@ -127,17 +126,18 @@ void test()
 
 void test_exam()
 {
+    srand(time(0));
     Master st(Algebra);
     st.name = "Petrov Petr";
     st.course = 6;
     st.attendance = 60;
     st.average = 3.7;
-    Professor pr("Igor Lvovich", Algebra);
+    Professor pr("Igor Lvovich", Algebra, rand() % 101);
     Exam alg;
     alg.subject = Algebra;
     pr.print_prof();
     st.print_st();
-    alg.grade = get_grade(alg, st);
+    alg.grade = get_grade(alg, st, pr);
     if (alg.grade == 2)
     {
         std::cout << "Exam has been failed.";

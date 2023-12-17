@@ -61,13 +61,15 @@ class Professor : public Staff
 {
 public:
     Subject subject;
-    double bonus = 0.5;
-    Professor(std::string name, Subject subject) 
+    double bonus;
+    Professor(std::string name = " ", Subject subject  = None, double bonus = 0)
     {
         this->name = name;
         this->subject = subject;
+        this->bonus = bonus;
     }
     ~Professor() {};
+
     void print_prof();
 };
 

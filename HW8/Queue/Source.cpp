@@ -1,10 +1,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
-
-using namespace std;
-
-
+#include "Queue.h"
 
 int main()
 {
